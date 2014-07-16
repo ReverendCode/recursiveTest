@@ -8,32 +8,60 @@ package com.company;
 public class QuickSort {
     private int[] theArray;
     private int arraySize;
+    private int centerAddress;
 
     public QuickSort(int[] array) {
         theArray=array;
         arraySize=theArray.length;
+        centerAddress = arraySize/2;
     }
 
-    private void recursiveSort(int left,int right) {
-
-if (arraySize<=3) sortManually(left, right);
+    public int getMedianValue(int left,int right) {//*NOTE* array is being ordered small to large, left to right
+        if (arraySize<=3)  manualMedianReturn(left, right);
         else {
-    long middleValue = findMedian(left,right);
+            int pivotValue = findPivotValue(left,right);
+            int pivotLocation = setPartition(left,right,pivotValue);
+            if (pivotLocation==centerAddress) return theArray[centerAddress];//if the center address has been ordered, return
+            if (pivotLocation<centerAddress) return getMedianValue(pivotLocation,right);//otherwise, keep sorting towards the centerAddress
+            if (pivotLocation>centerAddress) return getMedianValue(left,pivotLocation);
         }
+        return theArray[centerAddress];
     }
 
-    private void sortManually(int left, int right) {
-
+    private int setPartition(int left, int right, int pivotValue) {
+        int leftMarker = left;
+        int rightMarker = right-1;
+        while(true) {
+            while (theArray[++leftMarker]<pivotValue) ;
+            while (theArray[--rightMarker]>pivotValue) ;
+            if (leftMarker>=rightMarker) break;
+            else swap(leftMarker,rightMarker);
+        }
+        swap(leftMarker,right-1);
+        return leftMarker;
     }
 
-    private long findMedian(int left, int right) {
+    private void manualMedianReturn(int left, int right) {
+        if (theArray.length <=1) return; //if there is only one item, it has to be the median.
+
+       if (theArray.length == 2){
+           if (theArray[left]>theArray[right])swap(left,right);
+           return;
+       }
+
+        if (theArray[left]>theArray[right-1]) swap(left,right-1);
+        if (theArray[left]>theArray[right]) swap(left,right);
+        if (theArray[right-1]>theArray[right]) swap(right-1,right);
+    }
+
+    private int findPivotValue(int left, int right) {
         int centerIsh = (left+right)/2; //get a location near the middle of the array
 
         if (theArray[left]> theArray[centerIsh]) swap (left, centerIsh);
         if (theArray[left]> theArray[right]) swap(left,right);
-        if (theArray[right]> theArray[centerIsh]) swap(right,centerIsh);
-
-        return 0;
+        if (theArray[right]< theArray[centerIsh]) swap(right,centerIsh);
+        swap(centerIsh,right-1); //set pivot
+        return theArray[right-1];
     }
     public String displayList () {
         String output ="";
@@ -50,8 +78,10 @@ if (arraySize<=3) sortManually(left, right);
     }
 
     private void swap(int left, int right) {
-        int temp = left;
-        left = right;
-        right = temp;
+
+        int temp = theArray[left];
+        theArray[left]=theArray[right];
+        theArray[right]=temp;
+
     }
 }
