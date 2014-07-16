@@ -1,11 +1,13 @@
 package com.company;
 
+import java.util.EmptyStackException;
+
 /**
  * Created by Code on 7/15/14.
  *
  * This class will automatically sort an array of integers that is passed to it using a quicksort algorithm
  */
-public class QuickSort {
+public class QuickSort {//*NOTE* this may act funny with an even number of elements
     private int[] theArray;
     private int arraySize;
     private int centerAddress;
@@ -15,8 +17,11 @@ public class QuickSort {
         arraySize=theArray.length;
         centerAddress = arraySize/2;
     }
+    public int getMedian() {
+        return getMedianValue(0,arraySize-1);
+    }
 
-    public int getMedianValue(int left,int right) {//*NOTE* array is being ordered small to large, left to right
+    private int getMedianValue(int left,int right) {//*NOTE* array is being ordered small to large, left to right
         if (arraySize<=3)  manualMedianReturn(left, right);
         else {
             int pivotValue = findPivotValue(left,right);
@@ -42,9 +47,10 @@ public class QuickSort {
     }
 
     private void manualMedianReturn(int left, int right) {
-        if (theArray.length <=1) return; //if there is only one item, it has to be the median.
+        if (theArray.length==0) throw new EmptyStackException();
+        if (theArray.length==1) return; //if there is only one item, it has to be the median.
 
-       if (theArray.length == 2){
+       if (theArray.length==2){
            if (theArray[left]>theArray[right])swap(left,right);
            return;
        }
